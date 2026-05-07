@@ -1,7 +1,7 @@
 # dbSherpa Studio — Redesign PRD
 
 ## Original Problem Statement
-> Clone https://github.com/sunpratik1772/dbstudio-may (branch dbstudio-may) and redesign the UI to be a minimalist, Supabase-style with collapsible side panels and chat-friendly nodes palette. Keep base functionality (DB schema design / workflow nodes / Copilot chat). Apply Railway/Linear neutral colors, minimalist icons, premium aesthetic. Use Gemini key `<REDACTED>`.
+> Clone https://github.com/sunpratik1772/dbstudio-may (branch dbstudio-may) and redesign the UI to be a minimalist, Supabase-style with collapsible side panels and chat-friendly nodes palette. Keep base functionality (DB schema design / workflow nodes / Copilot chat). Apply Railway/Linear neutral colors, minimalist icons, premium aesthetic. **Secrets:** set `GEMINI_API_KEY` only in `/app/backend/.env` (never commit API keys in docs or source).
 
 ## What is dbSherpa Studio
 A modular agent-driven trade-surveillance platform. Investigators describe an alert in natural language; the Gemini-powered Copilot authors a deterministic workflow; the engine runs it and produces a regulator-grade Excel report.
