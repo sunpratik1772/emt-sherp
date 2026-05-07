@@ -688,13 +688,27 @@ export default function Copilot() {
           setCopilotWidth(right - clientX)
         }}
       />
-      {/* Header — matches RightPanel/Shell: icon + title + eyebrow + close. */}
-      <div className="px-4 pt-4 pb-3 shrink-0" style={{ borderBottom: '1px solid var(--border)' }}>
+      {/* Header — sleek single row: icon + title + tabs + close. */}
+      <div className="px-4 py-2.5 shrink-0" style={{ borderBottom: '1px solid var(--border-soft)' }}>
         <div className="flex items-center gap-2">
-          <Sparkles size={16} strokeWidth={2} style={{ color: 'var(--accent)' }} />
-          <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-0)' }}>Copilot</span>
-          <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
-            GEMINI
+          <Sparkles size={13} strokeWidth={2} style={{ color: 'var(--accent)' }} />
+          <span className="display" style={{ fontSize: 12.5, fontWeight: 540, color: 'var(--text-0)', letterSpacing: '-0.01em' }}>
+            Copilot
+          </span>
+          <span
+            className="font-mono"
+            style={{
+              fontSize: 9,
+              color: 'var(--text-3)',
+              padding: '1px 5px',
+              borderRadius: 3,
+              background: 'var(--bg-3)',
+              border: '1px solid var(--border-soft)',
+              letterSpacing: '0.04em',
+              textTransform: 'uppercase',
+            }}
+          >
+            Gemini
           </span>
           <div className="flex-1" />
           {/* Chat / Plan tabs aligned right */}
@@ -707,60 +721,117 @@ export default function Copilot() {
             aria-label="Close panel"
             className="flex items-center justify-center"
             style={{
-              width: 24, height: 24, borderRadius: 6,
+              width: 22, height: 22, borderRadius: 5,
               background: 'transparent', color: 'var(--text-3)',
-              border: '1px solid var(--border-soft)',
+              border: '1px solid transparent',
               cursor: 'pointer',
             }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-0)' }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'var(--text-3)' }}
           >
-            <XIcon size={12} strokeWidth={2} />
+            <XIcon size={11} strokeWidth={2} />
           </button>
-        </div>
-        <div className="mt-2 font-mono" style={{ fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text-3)' }}>
-          {useGenerate ? `PLAN · ${criticIter} CRITIC PASSES` : 'CHAT'}
         </div>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
         {copilotMessages.length === 0 && (
-          <div className="space-y-5">
-            {useGenerate && (
-              <GuardrailsCard guardrails={guardrails} error={guardrailError} />
-            )}
-            <div>
-              <div className="font-mono mb-2 px-1" style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
-                PROMPTS
+          <div className="space-y-3">
+            {/* Compact greeting line */}
+            <div
+              className="flex items-start gap-2.5"
+              style={{ marginBottom: 6 }}
+            >
+              <div
+                className="shrink-0 flex items-center justify-center"
+                style={{
+                  width: 22, height: 22, borderRadius: 6,
+                  background: 'var(--bg-3)',
+                  border: '1px solid var(--border-soft)',
+                  color: 'var(--accent)',
+                }}
+              >
+                <Sparkles size={11} strokeWidth={2} />
               </div>
-              <div className="space-y-2">
-                {EXAMPLE_PROMPTS.map((p, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setInput(p)}
-                    className="w-full text-left transition-colors"
-                    style={{
-                      fontSize: 12.5,
-                      padding: '12px 14px',
-                      borderRadius: 10,
-                      background: 'var(--bg-2)',
-                      color: 'var(--text-1)',
-                      border: '1px solid var(--border)',
-                      lineHeight: 1.5,
-                    }}
-                    onMouseEnter={(e) => {
-                      ;(e.currentTarget as HTMLButtonElement).style.color = 'var(--text-0)'
-                      ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border-strong)'
-                    }}
-                    onMouseLeave={(e) => {
-                      ;(e.currentTarget as HTMLButtonElement).style.color = 'var(--text-1)'
-                      ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)'
-                    }}
-                  >
-                    {p}
-                  </button>
-                ))}
+              <div
+                style={{
+                  fontSize: 12.5,
+                  color: 'var(--text-1)',
+                  lineHeight: 1.5,
+                  letterSpacing: '-0.005em',
+                  paddingTop: 2,
+                }}
+              >
+                {useGenerate
+                  ? 'Describe a surveillance scenario — I\'ll build the workflow.'
+                  : 'Ask me anything about the current workflow.'}
               </div>
             </div>
+
+            {useGenerate && (
+              <div>
+                <div
+                  className="font-mono px-1"
+                  style={{
+                    fontSize: 9.5,
+                    color: 'var(--text-3)',
+                    letterSpacing: '0.10em',
+                    textTransform: 'uppercase',
+                    marginTop: 14,
+                    marginBottom: 6,
+                  }}
+                >
+                  Try
+                </div>
+                <div className="flex flex-col" style={{ gap: 4 }}>
+                  {EXAMPLE_PROMPTS.slice(0, 4).map((p, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setInput(p)}
+                      className="w-full text-left transition-colors flex items-start gap-2"
+                      style={{
+                        fontSize: 12,
+                        padding: '7px 9px',
+                        borderRadius: 6,
+                        background: 'transparent',
+                        color: 'var(--text-2)',
+                        border: '1px solid var(--border-soft)',
+                        lineHeight: 1.45,
+                        letterSpacing: '-0.005em',
+                      }}
+                      onMouseEnter={(e) => {
+                        ;(e.currentTarget as HTMLButtonElement).style.color = 'var(--text-0)'
+                        ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border-strong)'
+                        ;(e.currentTarget as HTMLButtonElement).style.background = 'var(--bg-2)'
+                      }}
+                      onMouseLeave={(e) => {
+                        ;(e.currentTarget as HTMLButtonElement).style.color = 'var(--text-2)'
+                        ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border-soft)'
+                        ;(e.currentTarget as HTMLButtonElement).style.background = 'transparent'
+                      }}
+                    >
+                      <span style={{ color: 'var(--text-3)', lineHeight: 1.45 }}>›</span>
+                      <span className="flex-1">{p}</span>
+                    </button>
+                  ))}
+                </div>
+                {guardrails && (
+                  <div
+                    className="font-mono"
+                    style={{
+                      fontSize: 9.5,
+                      color: 'var(--text-3)',
+                      letterSpacing: '0.02em',
+                      marginTop: 12,
+                      paddingLeft: 4,
+                    }}
+                  >
+                    {guardrails.nodes.length} nodes · {guardrails.data_sources.length} sources · {guardrails.skills.length} skills
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
@@ -770,9 +841,6 @@ export default function Copilot() {
 
         {(isLoading || phases.length > 0) && useGenerate && (
           <>
-            <div className="mb-3">
-              <GuardrailsCard guardrails={guardrails} error={guardrailError} />
-            </div>
             {isLoading && phases.length === 0 && (
               <div className="flex items-center gap-2 mb-3">
                 <CopilotAvatar size={24} />

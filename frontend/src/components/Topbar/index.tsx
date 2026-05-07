@@ -198,115 +198,48 @@ export default function Topbar() {
 
   return (
     <div
-      className="panel-glass flex items-center shrink-0 relative z-20 min-h-[52px]"
+      className="panel-glass flex items-center shrink-0 relative z-20"
       style={{
-        padding: '10px 22px',
-        gap: 18,
+        height: 48,
+        padding: '0 14px',
+        gap: 8,
         borderBottom: '1px solid var(--border)',
       }}
     >
-      {/* Left — brand + breadcrumbs (Linear/Railway-style monochrome) */}
-      <div className="flex items-center shrink-0" style={{ gap: 12 }}>
-        <div
-          className="flex items-center justify-center shrink-0"
-          style={{
-            width: 26,
-            height: 26,
-            borderRadius: 6,
-            background: 'var(--bg-3)',
-            border: '1px solid var(--border-strong)',
-            color: 'var(--text-0)',
-          }}
-          aria-label="dbSherpa"
-        >
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <path
-              d="M11.5 4.5 C11.5 3.4 10.6 2.5 9.5 2.5 H6.5 C5.4 2.5 4.5 3.4 4.5 4.5 V5 C4.5 6.1 5.4 7 6.5 7 H9.5 C10.6 7 11.5 7.9 11.5 9 V11.5 C11.5 12.6 10.6 13.5 9.5 13.5 H6.5 C5.4 13.5 4.5 12.6 4.5 11.5"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              fill="none"
-            />
-          </svg>
-        </div>
-        <div className="flex items-baseline gap-2 shrink-0 hidden sm:flex">
-          <span className="display" style={{ fontSize: 14, fontWeight: 550, color: 'var(--text-0)', letterSpacing: '-0.018em' }}>
-            dbSherpa
-          </span>
-          <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-            studio
-          </span>
-        </div>
-        <div className="w-px h-6 shrink-0 hidden md:block" style={{ background: borderHi, marginLeft: 2, marginRight: 2 }} />
+      {/* Left — breadcrumbs only (brand moved to LeftNav) */}
+      <div className="flex items-center shrink-0" style={{ gap: 4 }}>
         <BreadcrumbPill label="Main" />
-        <span style={{ color: 'var(--text-3)', fontSize: 13, margin: '0 2px' }} aria-hidden>
+        <span style={{ color: 'var(--text-3)', fontSize: 13, margin: '0 1px' }} aria-hidden>
           ›
         </span>
         <BreadcrumbPill label={workflowSlug} mono />
         <IconGhost title="Star" onMouseAccent="warning">
-          <Star size={13} strokeWidth={1.3} />
+          <Star size={12} strokeWidth={1.4} />
         </IconGhost>
         <IconGhost title="More">
-          <MoreHorizontal size={13} strokeWidth={1.8} />
+          <MoreHorizontal size={12} strokeWidth={1.8} />
         </IconGhost>
       </div>
 
       <div className="flex-1 min-w-[12px]" />
 
-      {/* Center — studio tabs */}
-      <div className="flex items-center shrink-0" style={{ gap: 2 }}>
-        {STUDIO_TABS.map(({ id, label, disabled }) => {
-          const active = studioTab === id
-          return (
-            <button
-              key={id}
-              type="button"
-              disabled={disabled}
-              onClick={() => onStudioTab(id)}
-              className="relative border-0 cursor-pointer bg-transparent"
-              style={{
-                padding: '7px 12px',
-                fontSize: 12.5,
-                fontWeight: active ? 600 : 500,
-                color: disabled ? 'var(--text-3)' : active ? 'var(--text-0)' : 'var(--text-2)',
-                opacity: disabled ? 0.45 : 1,
-                cursor: disabled ? 'not-allowed' : 'pointer',
-                fontFamily: 'inherit',
-              }}
-            >
-              {label}
-              {active && !disabled && (
-                <span
-                  className="absolute rounded-sm pointer-events-none"
-                  style={{
-                    left: 12,
-                    right: 12,
-                    bottom: -11,
-                    height: 2,
-                    background: 'var(--accent)',
-                  }}
-                />
-              )}
-            </button>
-          )
-        })}
-      </div>
+      {/* Center — studio tabs (now in LeftNav, removed) */}
 
       <div className="flex-1 min-w-[12px]" />
 
-      {/* Right — workflow tools + v5 chrome */}
-      <div className="flex items-center shrink-0" style={{ gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-        <span className="font-mono whitespace-nowrap hidden lg:inline" style={{ color: 'var(--text-3)', fontSize: 11, letterSpacing: '0.02em' }}>
-          {nodeCount} nd · {edgeCount} ed
+      {/* Right — icon-only actions */}
+      <div className="flex items-center shrink-0" style={{ gap: 4 }}>
+        <span className="font-mono whitespace-nowrap hidden xl:inline" style={{ color: 'var(--text-3)', fontSize: 10.5, letterSpacing: '0.02em', marginRight: 6 }}>
+          {nodeCount}n · {edgeCount}e
         </span>
-        <span className="w-px h-[18px] shrink-0 hidden sm:block" style={{ background: borderHi }} />
+        <span className="w-px h-[18px] shrink-0 hidden sm:block" style={{ background: borderHi, marginRight: 2 }} />
 
-        <GhostButton disabled title="Coming soon">
-          Share
-        </GhostButton>
-        <BarButton onClick={() => setDrawerOpen(true)} icon={<LayoutTemplate size={14} strokeWidth={2} />}>
-          Templates
-        </BarButton>
+        <IconAction
+          onClick={() => importInputRef.current?.click()}
+          title="Import workflow"
+        >
+          <Upload size={14} strokeWidth={1.85} />
+        </IconAction>
         <input
           ref={importInputRef}
           type="file"
@@ -318,18 +251,15 @@ export default function Topbar() {
             if (file) void handleImportFile(file)
           }}
         />
-        <BarButton onClick={() => importInputRef.current?.click()} icon={<Upload size={14} strokeWidth={2} />}>
-          Import
-        </BarButton>
-        <BarButton
+        <IconAction
           onClick={() => {
             void handleExport()
           }}
-          icon={exporting ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} strokeWidth={2} />}
           disabled={!workflow || exporting}
+          title="Export workflow"
         >
-          Export
-        </BarButton>
+          {exporting ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} strokeWidth={1.85} />}
+        </IconAction>
         <StatusIconButton
           onClick={() => {
             void handleValidate()
@@ -339,58 +269,104 @@ export default function Topbar() {
           status={validationClean ? 'ok' : validateBadge && isCurrentValidation ? 'error' : 'idle'}
           badge={validateBadge && isCurrentValidation ? validationIssues!.length : undefined}
         >
-          {validating ? <Loader2 size={15} className="animate-spin" /> : <ShieldCheck size={15} strokeWidth={2.2} />}
+          {validating ? <Loader2 size={14} className="animate-spin" /> : <ShieldCheck size={14} strokeWidth={1.85} />}
         </StatusIconButton>
-        <BarButton
+        <IconAction
           onClick={resetRun}
-          icon={<Trash2 size={14} strokeWidth={2} />}
           disabled={isRunning || (!workflow && runLog.length === 0 && !runResult && !runError)}
+          title="Clear canvas / run state"
         >
-          Clear
-        </BarButton>
-        <BarButton
+          <Trash2 size={14} strokeWidth={1.85} />
+        </IconAction>
+        <IconAction
           onClick={() => {
             void handleSave()
           }}
-          icon={saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} strokeWidth={2} />}
           disabled={!workflow || saving}
+          title="Save workflow"
         >
-          Save
-        </BarButton>
+          {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} strokeWidth={1.85} />}
+        </IconAction>
         <RunButton onClick={handleRun} disabled={!workflow || isRunning} running={isRunning} />
 
-        <span className="w-px h-[18px] shrink-0" style={{ background: borderHi }} />
+        <span className="w-px h-[18px] shrink-0" style={{ background: borderHi, marginLeft: 2, marginRight: 2 }} />
 
-        <ThemeIconButton onClick={toggleTheme} title="Toggle theme">
-          {theme === 'dark' ? <Sun size={14} strokeWidth={1.4} /> : <Moon size={14} strokeWidth={1.4} />}
-        </ThemeIconButton>
-        <button
-          type="button"
-          title="Account"
-          className="shrink-0 border-0 p-0 cursor-default"
-          style={{
-            width: 26,
-            height: 26,
-            borderRadius: '50%',
-            background: 'var(--bg-3)',
-            border: '1px solid var(--border-strong)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--text-1)',
-            fontSize: 11,
-            fontWeight: 600,
-            letterSpacing: '-0.01em',
-          }}
-          aria-label="Profile"
-        >
-          d
-        </button>
+        <IconAction onClick={toggleTheme} title="Toggle theme">
+          {theme === 'dark' ? <Sun size={14} strokeWidth={1.85} /> : <Moon size={14} strokeWidth={1.85} />}
+        </IconAction>
+        <IconAction title="Account" onClick={() => {}}>
+          <span
+            style={{
+              width: 18,
+              height: 18,
+              borderRadius: '50%',
+              background: 'var(--bg-3)',
+              border: '1px solid var(--border-strong)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--text-1)',
+              fontSize: 10,
+              fontWeight: 600,
+              letterSpacing: '-0.01em',
+            }}
+          >
+            d
+          </span>
+        </IconAction>
       </div>
 
       {/* Title tooltip strip — workflow name (secondary to breadcrumbs) */}
       <span className="sr-only">{title}</span>
     </div>
+  )
+}
+
+function IconAction({
+  children,
+  onClick,
+  disabled,
+  title,
+}: {
+  children: React.ReactNode
+  onClick: () => void
+  disabled?: boolean
+  title: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      aria-label={title}
+      className="flex items-center justify-center"
+      style={{
+        width: 28,
+        height: 28,
+        borderRadius: 6,
+        background: 'transparent',
+        color: disabled ? 'var(--text-3)' : 'var(--text-1)',
+        border: '1px solid transparent',
+        opacity: disabled ? 0.55 : 1,
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        transition: 'background 120ms, color 120ms, border-color 120ms',
+      }}
+      onMouseEnter={(e) => {
+        if (disabled) return
+        ;(e.currentTarget as HTMLElement).style.background = 'var(--bg-2)'
+        ;(e.currentTarget as HTMLElement).style.borderColor = 'var(--border-soft)'
+        ;(e.currentTarget as HTMLElement).style.color = 'var(--text-0)'
+      }}
+      onMouseLeave={(e) => {
+        if (disabled) return
+        ;(e.currentTarget as HTMLElement).style.background = 'transparent'
+        ;(e.currentTarget as HTMLElement).style.borderColor = 'transparent'
+        ;(e.currentTarget as HTMLElement).style.color = 'var(--text-1)'
+      }}
+    >
+      {children}
+    </button>
   )
 }
 
@@ -566,16 +542,15 @@ function StatusIconButton({
       aria-label={title}
       className="relative flex items-center justify-center border-0"
       style={{
-        width: 32,
-        height: 32,
-        borderRadius: 8,
+        width: 28,
+        height: 28,
+        borderRadius: 6,
         background,
         color,
         border: `1px solid ${border}`,
         opacity: disabled ? 0.55 : 1,
         cursor: disabled ? 'not-allowed' : 'pointer',
-        transition: 'background 160ms, color 160ms, border-color 160ms, transform 160ms',
-        transform: status === 'ok' ? 'scale(1.02)' : 'scale(1)',
+        transition: 'background 160ms, color 160ms, border-color 160ms',
       }}
     >
       {children}
@@ -584,16 +559,16 @@ function StatusIconButton({
           className="num"
           style={{
             position: 'absolute',
-            top: -5,
-            right: -5,
-            minWidth: 16,
-            height: 16,
-            padding: '0 4px',
+            top: -4,
+            right: -4,
+            minWidth: 14,
+            height: 14,
+            padding: '0 3px',
             borderRadius: 999,
             background: 'var(--danger)',
             color: '#fff',
-            fontSize: 9,
-            lineHeight: '16px',
+            fontSize: 8.5,
+            lineHeight: '14px',
             border: '1px solid var(--panel-glass-bg)',
           }}
         >
@@ -659,27 +634,30 @@ function RunButton({ onClick, disabled, running }: { onClick: () => void; disabl
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="flex items-center gap-2 border-0 cursor-pointer"
+      title={running ? 'Running…' : 'Run workflow'}
+      aria-label="Run workflow"
+      className="flex items-center justify-center"
       style={{
-        height: 32,
-        padding: '0 14px',
-        borderRadius: 8,
-        fontSize: 13,
-        fontWeight: 600,
+        height: 28,
+        padding: '0 10px',
+        gap: 6,
+        borderRadius: 6,
+        fontSize: 11.5,
+        fontWeight: 540,
         background:
           disabled && !running
-            ? 'var(--border-solid)'
-            : 'linear-gradient(135deg, var(--accent-hi) 0%, var(--accent-lo) 55%, color-mix(in srgb, var(--accent-cyan) 70%, var(--accent-lo)) 100%)',
-        color: '#fff',
-        border: '1px solid color-mix(in srgb, var(--accent-lo) 45%, transparent)',
-        boxShadow: disabled && !running ? 'none' : '0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent)',
+            ? 'var(--bg-3)'
+            : 'var(--text-0)',
+        color: disabled && !running ? 'var(--text-3)' : 'var(--bg-base)',
+        border: `1px solid ${disabled && !running ? 'var(--border-soft)' : 'var(--text-0)'}`,
         opacity: disabled && !running ? 0.55 : 1,
         cursor: disabled ? (running ? 'progress' : 'not-allowed') : 'pointer',
         fontFamily: 'inherit',
+        letterSpacing: '-0.005em',
       }}
     >
-      {running ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} strokeWidth={2.5} />}
-      <span>{running ? 'Running…' : 'Run'}</span>
+      {running ? <Loader2 size={12} className="animate-spin" /> : <Play size={11} strokeWidth={2.4} fill="currentColor" />}
+      <span>{running ? 'Running' : 'Run'}</span>
     </button>
   )
 }

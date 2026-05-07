@@ -147,17 +147,6 @@ export const CustomNode = memo(({ id, data }: NodeProps<NodeData>) => {
           >
             {data.label}
           </div>
-          <div
-            className="font-mono truncate"
-            style={{
-              color: 'var(--text-3)',
-              letterSpacing: '0.02em',
-              fontSize: 9.5,
-              marginTop: 2,
-            }}
-          >
-            {getNodeDisplayName(data.nodeType)}
-          </div>
         </div>
       </div>
 

@@ -18,62 +18,82 @@ A modular agent-driven trade-surveillance platform. Investigators describe an al
 - Public URL: `https://chat-nodes-ui.preview.emergentagent.com`
 
 ## Redesign Implemented (2026-05-07)
-Drastically shifted the UI from a "cosmic glass" purple/violet aesthetic to a **Linear / Railway / Supabase neutral premium** look — without touching backend logic or store/API surface.
+Drastically restructured the layout to match the user's Supabase reference: a vertical LeftNav with 3 collapse modes (Expanded / Collapsed / Expand-on-hover), a slim icon-only Topbar, and refined Linear/Railway/Supabase-style typography (Geist).
 
 ### Visual System
 - Neutral dark palette (`#08090a` base, `#101113` surface, `#16171a` elevated)
 - Whisper-thin borders (`rgba(255,255,255,0.06–0.10)`)
 - Single restrained accent: cool indigo `#7c83ff` (Linear-ish)
-- Supabase emerald `#3ecf8e` reserved for success states only
+- Supabase emerald `#3ecf8e` reserved for success/online states only
 - Cyan `#38bdf8` reserved for "running/streaming"
 - **Geist** primary font (Vercel) loaded via CDN, Inter fallback
 - Linear-style font-feature settings + tighter tracking on display text
 - Light theme mirrors Linear/Notion (white surfaces, refined borders)
 
-### Drastic Component Changes
-1. **Topbar** — Replaced AI-slop gradient brand orb with a clean monochrome SVG glyph in a subtle bordered tile + tight wordmark. Removed gradient avatar in favor of a Linear-style monochrome letter circle.
-2. **NodePanel (Palette)** — Brutally rewritten as Supabase-style:
-   - "PALETTE 32" header with refined count badge
-   - Search input with `⌘K` kbd hint
-   - **Collapsible sections** (chevron toggles)
-   - Tiny color dots as section identifiers next to each node
-   - Plus button on each section header
-   - Node cards: dot · icon · title · type-id (right-aligned mono)
-3. **ActivityRail** — Simplified Linear-style: hairline left indicator on active item, no purple fill.
-4. **CustomNode** — Railway-style:
-   - Removed top accent stripe in favor of a hairline left accent
-   - Cleaner monochrome icon (no colored background tile)
-   - Tighter typography with display-class title and mono node-type subtitle
-   - Same status row, ports, config tags
-5. **Empty Canvas** — Linear-style hero:
-   - "NEW WORKFLOW" pill at top
-   - Display-class heading
-   - Pure-white primary CTA (Linear style)
-   - `⌘K` search hint at bottom
-6. **Backdrop** — Removed all 3 animated cosmic blobs; replaced with a faint dot grid + a single subtle accent spotlight at the top.
+### Layout (post-redesign)
+```
+┌────────┬─────────────────────────────────────────────────────────┐
+│        │  Topbar (48px, icon-only actions)                        │
+│ LeftNav├─────────────────────────────────────────────────────────┤
+│ (Supa- │ NodePanel │ Canvas              │ Activity │ RightPanel │
+│ base)  │ (3 modes) │ (ReactFlow)         │  Rail    │ (modes)    │
+│ 3 modes│           │                     │          │            │
+└────────┴─────────────────────────────────────────────────────────┘
+```
 
-### Files Touched
-- `/app/frontend/src/styles/globals.css` — entire token palette + utility refinements
-- `/app/frontend/src/index.html` — Geist font CDN preconnect + load
+### Drastic Component Changes
+1. **NEW LeftNav (`/src/components/LeftNav.tsx`)** — Supabase clone:
+   - Brand at top (S-glyph + dbSherpa STUDIO wordmark)
+   - "Surveillance · PROD" project pill
+   - Nav rows: Workflow / Templates / Node Library / Skills / Data Sources / Agents / Logs
+   - Divider + Settings at bottom
+   - **3 modes** (radio at bottom): Expanded (216px) / Collapsed (52px) / Expand on hover
+   - Mode persisted to localStorage
+   - In Collapsed mode the radio collapses to a single chevron toggle button
+2. **Topbar** — slimmed dramatically:
+   - Brand removed (now in LeftNav)
+   - Studio tabs removed (now in LeftNav)
+   - All action buttons (Import / Export / Validate / Clear / Save / Theme) now icon-only with tooltip
+   - Run button compact monochrome (Linear primary style)
+   - Avatar reduced to 18px letter circle in icon-button frame
+3. **NodePanel (Palette)** — Supabase-style with **3 view modes**:
+   - Expanded: full collapsible sections with dot identifiers + count badges + chevrons
+   - Icon-only (52px): vertical icon rail with section dividers
+   - Hidden (14px): tiny floating reopen handle
+4. **CustomNode** — minimal Railway-style (subtitle removed per user feedback): hairline left accent + clean icon + title only
+5. **ActivityRail** — Linear-style with hairline left active indicator (no purple fill)
+6. **Copilot** — sleek (per user feedback):
+   - Removed bulky GuardrailsCard
+   - Compact 1-line greeting bubble with sparkle icon
+   - 4 thin "Try" prompts with `›` arrow prefix
+   - Tiny stats footer: "32 nodes · 5 sources · 5 skills"
+7. **Empty Canvas** — Linear-style hero with "NEW WORKFLOW" pill, white CTA, ⌘K hint
+8. **Backdrop** — removed cosmic blobs; faint dot grid + subtle accent spotlight
+
+### Files Touched/Added
+- **NEW** `/app/frontend/src/components/LeftNav.tsx` — Supabase-style sidebar
+- `/app/frontend/src/App.tsx` — added LeftNav, restructured layout
+- `/app/frontend/src/styles/globals.css` — entire token palette
+- `/app/frontend/index.html` — Geist font CDN
 - `/app/frontend/tailwind.config.js` — colors aligned to new tokens
-- `/app/frontend/src/components/Topbar/index.tsx` — brand glyph + avatar
-- `/app/frontend/src/components/NodePanel/index.tsx` — full rewrite
-- `/app/frontend/src/components/ActivityRail.tsx` — full rewrite
-- `/app/frontend/src/components/WorkflowCanvas/CustomNode.tsx` — refined card
+- `/app/frontend/src/components/Topbar/index.tsx` — icon-only actions, removed brand+tabs
+- `/app/frontend/src/components/NodePanel/index.tsx` — 3 modes + collapsible sections
+- `/app/frontend/src/components/ActivityRail.tsx` — Linear hairline indicator
+- `/app/frontend/src/components/WorkflowCanvas/CustomNode.tsx` — refined card, no subtitle
 - `/app/frontend/src/components/WorkflowCanvas/index.tsx` — refined empty hero
+- `/app/frontend/src/components/Copilot/index.tsx` — sleek header + greeting + prompts
 - `/app/backend/server.py` — supervisor entrypoint mounting routers under `/api`
 - `/app/backend/.env` — Gemini key
 
 ## Functional Status
 - ✅ Backend `/api/health` returns 200
-- ✅ `/api/workflows` returns 7 saved scenarios (FX/FI front-running, wash, layering, spoofing, comms, all-sources demo)
-- ✅ `/api/drafts` returns 42 drafts
-- ✅ `/api/node-manifest` returns 8 palette sections + 32 nodes
-- ✅ `/api/copilot/chat` with Gemini works (returns reply)
-- ✅ `/api/copilot/generate` with Gemini works (generates 4-node workflow on prompt)
-- ✅ Frontend loads and shows redesigned UI
-- ✅ Loading workflow via Templates drawer renders 15 nodes on ReactFlow canvas
-- ✅ All UI panels (NodePanel, RightPanel/Copilot, ActivityRail, WorkflowDrawer) render the new aesthetic
+- ✅ All 7 workflow templates load and render on canvas
+- ✅ Gemini chat + workflow generation work end-to-end
+- ✅ All 32 nodes from manifest available in palette (8 sections)
+- ✅ LeftNav 3 modes work + persist to localStorage
+- ✅ NodePanel 3 modes work
+- ✅ Topbar icon-only actions all functional (tooltips appear on hover)
+- ✅ Backend testing iteration_1.json passes 11/11 tests
 
 ## Backlog / Next Phase
 - Polish WorkflowDrawer card styles further (currently inherits acceptable styling)
