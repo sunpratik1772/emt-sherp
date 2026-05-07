@@ -330,11 +330,41 @@ function collectErrorHints(
   return hints.slice(0, 20)
 }
 
+/**
+ * Linear-style 4-point sparkle. Two crossed diamonds rendered as a
+ * single SVG so it scales crisply at any size and never carries the
+ * "AI slop" gradient look of stock star icons.
+ */
+function AiGlyph({ size = 14 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 16 16"
+      fill="none"
+      aria-hidden
+      style={{ flexShrink: 0 }}
+    >
+      <path
+        d="M8 1.5 L9.4 6.6 L14.5 8 L9.4 9.4 L8 14.5 L6.6 9.4 L1.5 8 L6.6 6.6 Z"
+        fill="currentColor"
+        style={{ color: 'var(--accent)' }}
+      />
+      <path
+        d="M13.5 2.5 L13.95 4.05 L15.5 4.5 L13.95 4.95 L13.5 6.5 L13.05 4.95 L11.5 4.5 L13.05 4.05 Z"
+        fill="currentColor"
+        opacity={0.6}
+        style={{ color: 'var(--accent)' }}
+      />
+    </svg>
+  )
+}
+
 const EXAMPLE_PROMPTS = [
-  'Create an FX Front-Running workflow for trader T001 in EUR/USD with 3 signals and a 3-iteration critic loop',
-  'Create an FI Wash Trade workflow with counterparty circularity and price neutrality signals',
-  'Add a SPOOFING signal to the current workflow and update the decision thresholds',
-  'Generate an FI Layering workflow with cascading price level detection',
+  'Build a workflow that pulls trade data, scores anomalies, and writes a report',
+  'Add a validation step before the report generation',
+  'Show me what each node in the canvas does and how they connect',
+  'Refactor the workflow to add a critic loop with 2 iterations',
 ]
 
 function MessageBubble({ msg }: { msg: CopilotMessage }) {
@@ -355,7 +385,7 @@ function MessageBubble({ msg }: { msg: CopilotMessage }) {
           <span style={{ color: 'var(--info)' }}>You</span>
         ) : (
           <>
-            <Sparkles size={10} strokeWidth={2} style={{ color: 'var(--accent)' }} />
+            <AiGlyph size={9} />
             <span style={{ color: 'var(--accent)' }}>Copilot</span>
           </>
         )}
@@ -688,10 +718,10 @@ export default function Copilot() {
           setCopilotWidth(right - clientX)
         }}
       />
-      {/* Header — sleek single row: icon + title + tabs + close. */}
+      {/* Header — sleek single row: icon + title + close. */}
       <div className="px-4 py-2.5 shrink-0" style={{ borderBottom: '1px solid var(--border-soft)' }}>
         <div className="flex items-center gap-2">
-          <Sparkles size={13} strokeWidth={2} style={{ color: 'var(--accent)' }} />
+          <AiGlyph size={14} />
           <span className="display" style={{ fontSize: 12.5, fontWeight: 540, color: 'var(--text-0)', letterSpacing: '-0.01em' }}>
             Copilot
           </span>
@@ -711,11 +741,6 @@ export default function Copilot() {
             Gemini
           </span>
           <div className="flex-1" />
-          {/* Chat / Plan tabs aligned right */}
-          <div className="flex items-center gap-1">
-            <SegTab active={!useGenerate} onClick={() => setUseGenerate(false)} icon={<MessageSquare size={11} strokeWidth={2} />}>Chat</SegTab>
-            <SegTab active={useGenerate} onClick={() => setUseGenerate(true)} icon={<ListChecks size={11} strokeWidth={2} />}>Plan</SegTab>
-          </div>
           <button
             onClick={() => useWorkflowStore.getState().setRightPanelMode(null)}
             aria-label="Close panel"
@@ -749,10 +774,9 @@ export default function Copilot() {
                   width: 22, height: 22, borderRadius: 6,
                   background: 'var(--bg-3)',
                   border: '1px solid var(--border-soft)',
-                  color: 'var(--accent)',
                 }}
               >
-                <Sparkles size={11} strokeWidth={2} />
+                <AiGlyph size={11} />
               </div>
               <div
                 style={{
@@ -764,8 +788,8 @@ export default function Copilot() {
                 }}
               >
                 {useGenerate
-                  ? 'Describe a surveillance scenario — I\'ll build the workflow.'
-                  : 'Ask me anything about the current workflow.'}
+                  ? 'Describe a workflow — I\'ll build it.'
+                  : 'Ask anything about the current workflow.'}
               </div>
             </div>
 
@@ -924,7 +948,7 @@ export default function Copilot() {
             placeholder={
               currentWorkflow
                 ? 'Describe a fix or edit (the canvas workflow is attached)…'
-                : 'Describe a surveillance scenario…'
+                : 'Describe a workflow…'
             }
             rows={2}
             className="flex-1 rounded-lg px-3 py-2 resize-none outline-none transition-colors"

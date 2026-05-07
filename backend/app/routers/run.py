@@ -10,6 +10,7 @@ import copy
 import json
 import logging
 import os
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -24,6 +25,7 @@ from engine.workflow_format import workflow_from_yaml
 
 from ..deps import WORKFLOWS_DIR
 from ..schemas import RunWorkflowRequest
+from .library import append_run_log
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["run"])
@@ -107,9 +109,28 @@ def run(req: RunWorkflowRequest) -> dict:
     # Deterministic pre-flight. Errors short-circuit with HTTP 422 and
     # the same payload shape the /validate endpoint returns, so the
     # frontend handles both uniformly.
+    started = datetime.now(timezone.utc)
+    workflow_name = req.dag.get("name") or req.dag.get("id")
+    node_count = len(req.dag.get("nodes", []) or [])
+    edge_count = len(req.dag.get("edges", []) or [])
+
     dag = _resolve_workflow_mock_csv_paths(req.dag)
     validation = validate_dag(dag)
     if not validation.valid:
+        run_log_entry = {
+            "run_id": f"v_{int(started.timestamp() * 1000)}",
+            "workflow": workflow_name,
+            "started_at": started.isoformat(),
+            "finished_at": datetime.now(timezone.utc).isoformat(),
+            "duration_ms": int(
+                (datetime.now(timezone.utc) - started).total_seconds() * 1000
+            ),
+            "status": "error",
+            "node_count": node_count,
+            "edge_count": edge_count,
+            "error": "validation_failed",
+        }
+        append_run_log(run_log_entry)
         raise HTTPException(status_code=422, detail=validation.to_json())
 
     try:
@@ -133,8 +154,40 @@ def run(req: RunWorkflowRequest) -> dict:
         # banner even on a successful run.
         if validation.warnings:
             result["warnings"] = [w.to_json() for w in validation.warnings]
+
+        finished = datetime.now(timezone.utc)
+        append_run_log(
+            {
+                "run_id": ctx.run_id,
+                "workflow": workflow_name,
+                "started_at": started.isoformat(),
+                "finished_at": finished.isoformat(),
+                "duration_ms": int((finished - started).total_seconds() * 1000),
+                "status": "warning" if validation.warnings else "success",
+                "disposition": ctx.disposition,
+                "flag_count": ctx.get("flag_count", 0),
+                "node_count": node_count,
+                "edge_count": edge_count,
+                "report_path": ctx.report_path,
+                "download_url": result.get("download_url"),
+            }
+        )
         return result
     except Exception as exc:
+        finished = datetime.now(timezone.utc)
+        append_run_log(
+            {
+                "run_id": f"e_{int(started.timestamp() * 1000)}",
+                "workflow": workflow_name,
+                "started_at": started.isoformat(),
+                "finished_at": finished.isoformat(),
+                "duration_ms": int((finished - started).total_seconds() * 1000),
+                "status": "error",
+                "node_count": node_count,
+                "edge_count": edge_count,
+                "error": str(exc)[:500],
+            }
+        )
         logger.exception("Workflow run failed")
         raise HTTPException(status_code=500, detail=str(exc))
 

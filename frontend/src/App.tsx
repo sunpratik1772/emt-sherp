@@ -19,13 +19,17 @@ import Topbar from './components/Topbar'
 import WorkflowDrawer from './components/WorkflowDrawer'
 import ActivityRail from './components/ActivityRail'
 import LeftNav from './components/LeftNav'
+import { SkillsDrawer, DataSourcesDrawer, LogsDrawer } from './components/SectionDrawers'
 import { useApplyTheme } from './store/themeStore'
 import { useDraftAutosave } from './store/useDraftAutosave'
 import { useNodeRegistryStore } from './store/nodeRegistryStore'
+import { useStudioSectionStore } from './store/studioSectionStore'
 
 export default function App() {
   useApplyTheme()
   useDraftAutosave()
+  const section = useStudioSectionStore((s) => s.section)
+  const setSection = useStudioSectionStore((s) => s.setSection)
   useEffect(() => {
     void useNodeRegistryStore.getState().refreshFromBackend()
   }, [])
@@ -45,6 +49,9 @@ export default function App() {
             <ActivityRail />
             <RightPanel />
             <WorkflowDrawer />
+            <SkillsDrawer open={section === 'skills'} onClose={() => setSection(null)} />
+            <DataSourcesDrawer open={section === 'data'} onClose={() => setSection(null)} />
+            <LogsDrawer open={section === 'logs'} onClose={() => setSection(null)} />
           </div>
         </div>
       </div>

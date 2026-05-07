@@ -257,7 +257,7 @@ function EmptyCanvas({ onDragOver, onDrop }: { onDragOver: (e: DragEvent<HTMLDiv
           }}
         >
           Drag nodes from the left palette, chain typed ports, or ask the{' '}
-          <span style={{ color: 'var(--text-0)', fontWeight: 540 }}>Copilot</span> to generate an entire surveillance workflow.
+          <span style={{ color: 'var(--text-0)', fontWeight: 540 }}>Copilot</span> to generate the entire workflow for you.
         </p>
         <div className="flex items-center gap-2 mt-1">
           <button

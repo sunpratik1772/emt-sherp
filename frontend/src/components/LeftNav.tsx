@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { useWorkflowStore } from '../store/workflowStore'
+import { useStudioSectionStore, type StudioSection } from '../store/studioSectionStore'
 
 type NavMode = 'expanded' | 'collapsed' | 'hover'
 
@@ -35,9 +36,15 @@ interface NavItem {
   id: string
   label: string
   icon: LucideIcon
-  isActive: (state: { rightPanelMode: string | null; drawerOpen: boolean }) => boolean
+  isActive: (state: NavState) => boolean
   onClick: () => void
   disabled?: boolean
+}
+
+interface NavState {
+  rightPanelMode: string | null
+  drawerOpen: boolean
+  section: StudioSection
 }
 
 export default function LeftNav() {
@@ -45,6 +52,8 @@ export default function LeftNav() {
   const drawerOpen = useWorkflowStore((s) => s.workflowDrawerOpen)
   const setRightPanelMode = useWorkflowStore((s) => s.setRightPanelMode)
   const rightPanelMode = useWorkflowStore((s) => s.rightPanelMode)
+  const section = useStudioSectionStore((s) => s.section)
+  const setSection = useStudioSectionStore((s) => s.setSection)
 
   const [mode, setMode] = useState<NavMode>(() => {
     if (typeof window === 'undefined') return 'expanded'
@@ -64,60 +73,80 @@ export default function LeftNav() {
   const widthExpanded = 216
   const width = mode === 'expanded' || (mode === 'hover' && hovered) ? widthExpanded : widthCollapsed
 
+  // Closing all overlays returns to the canvas/workflow view.
+  const goToCanvas = () => {
+    setDrawerOpen(false)
+    setSection(null)
+    if (rightPanelMode === 'copilot') setRightPanelMode(null)
+  }
+
   const items: NavItem[] = [
     {
       id: 'workflow',
       label: 'Workflow',
       icon: LayoutGrid,
-      isActive: (s) => !s.drawerOpen && s.rightPanelMode !== 'copilot',
-      onClick: () => {
-        setDrawerOpen(false)
-        if (rightPanelMode === 'copilot') setRightPanelMode(null)
-      },
+      isActive: (s) => !s.drawerOpen && s.rightPanelMode !== 'copilot' && s.section === null,
+      onClick: goToCanvas,
     },
     {
       id: 'templates',
       label: 'Templates',
       icon: LayoutTemplate,
       isActive: (s) => s.drawerOpen,
-      onClick: () => setDrawerOpen(true),
+      onClick: () => {
+        setSection(null)
+        setDrawerOpen(true)
+      },
     },
     {
       id: 'nodes',
       label: 'Node Library',
       icon: Boxes,
       isActive: () => false,
-      onClick: () => setDrawerOpen(true),
+      onClick: () => {
+        setSection(null)
+        setDrawerOpen(true)
+      },
     },
     {
       id: 'skills',
       label: 'Skills',
       icon: Lightbulb,
-      isActive: () => false,
-      onClick: () => {},
-      disabled: true,
+      isActive: (s) => s.section === 'skills',
+      onClick: () => {
+        setDrawerOpen(false)
+        setSection(section === 'skills' ? null : 'skills')
+      },
     },
     {
       id: 'data',
       label: 'Data Sources',
       icon: Database,
-      isActive: () => false,
-      onClick: () => {},
-      disabled: true,
+      isActive: (s) => s.section === 'data',
+      onClick: () => {
+        setDrawerOpen(false)
+        setSection(section === 'data' ? null : 'data')
+      },
     },
     {
       id: 'agents',
       label: 'Agents',
       icon: Bot,
       isActive: (s) => s.rightPanelMode === 'copilot',
-      onClick: () => setRightPanelMode('copilot'),
+      onClick: () => {
+        setSection(null)
+        setRightPanelMode('copilot')
+      },
     },
     {
       id: 'logs',
       label: 'Logs',
       icon: Activity,
-      isActive: (s) => s.rightPanelMode === 'runlog',
-      onClick: () => setRightPanelMode('runlog'),
+      isActive: (s) => s.section === 'logs',
+      onClick: () => {
+        setDrawerOpen(false)
+        setSection(section === 'logs' ? null : 'logs')
+      },
     },
   ]
 
@@ -125,10 +154,12 @@ export default function LeftNav() {
     id: 'settings',
     label: 'Settings',
     icon: Settings,
-    isActive: () => false,
+    isActive: (s) => s.section === 'settings',
     onClick: () => {},
     disabled: true,
   }
+
+  const navState: NavState = { rightPanelMode, drawerOpen, section }
 
   return (
     <aside
@@ -230,7 +261,7 @@ export default function LeftNav() {
               className="display truncate flex-1 min-w-0"
               style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-0)' }}
             >
-              Surveillance
+              Workspace
             </span>
             <span
               className="font-mono shrink-0"
@@ -254,7 +285,7 @@ export default function LeftNav() {
       {/* Items */}
       <nav className="flex-1 overflow-y-auto py-2 flex flex-col gap-0.5 px-1.5">
         {items.map((it) => (
-          <NavRow key={it.id} item={it} showLabels={showLabels} state={{ rightPanelMode, drawerOpen }} />
+          <NavRow key={it.id} item={it} showLabels={showLabels} state={navState} />
         ))}
         <div
           style={{
@@ -263,7 +294,7 @@ export default function LeftNav() {
             margin: '8px 6px',
           }}
         />
-        <NavRow item={settingsItem} showLabels={showLabels} state={{ rightPanelMode, drawerOpen }} />
+        <NavRow item={settingsItem} showLabels={showLabels} state={navState} />
       </nav>
 
       {/* Sidebar control */}
@@ -356,7 +387,7 @@ function NavRow({
 }: {
   item: NavItem
   showLabels: boolean
-  state: { rightPanelMode: string | null; drawerOpen: boolean }
+  state: NavState
 }) {
   const Icon = item.icon
   const active = item.isActive(state)

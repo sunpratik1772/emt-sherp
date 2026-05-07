@@ -22,7 +22,7 @@ import type {
   ValidationResult,
 } from '../types'
 
-const BASE = '/api'
+export const BASE = '/api'
 
 /**
  * Thrown when `/run` (or any other endpoint) rejects a DAG because it

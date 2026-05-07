@@ -23,6 +23,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import agent as agent_routes
 from app.routers import copilot as copilot_routes
+from app.routers import library as library_routes
 from app.routers import reports as reports_routes
 from app.routers import run as run_routes
 from app.routers import validate as validate_routes
@@ -47,6 +48,7 @@ app.include_router(reports_routes.router, prefix="/api")
 app.include_router(copilot_routes.router, prefix="/api")
 app.include_router(copilot_routes.contracts_router, prefix="/api")
 app.include_router(agent_routes.router, prefix="/api")
+app.include_router(library_routes.router, prefix="/api")
 
 
 @app.get("/api/")
