@@ -218,24 +218,61 @@ function EmptyCanvas({ onDragOver, onDrop }: { onDragOver: (e: DragEvent<HTMLDiv
       onDragOver={onDragOver}
       onDrop={onDrop}
     >
-      <div className="text-center relative z-10 max-w-md px-6" style={{ display: 'grid', gap: 18, justifyItems: 'center' }}>
-        <h2 style={{ color: 'var(--text-0)', fontSize: 30, fontWeight: 600, letterSpacing: '-0.03em', lineHeight: 1.1 }}>
+      <div className="text-center relative z-10 max-w-md px-6" style={{ display: 'grid', gap: 16, justifyItems: 'center' }}>
+        {/* Linear-style decorative chip */}
+        <span
+          className="font-mono"
+          style={{
+            fontSize: 10,
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+            color: 'var(--text-3)',
+            padding: '4px 10px',
+            borderRadius: 999,
+            border: '1px solid var(--border)',
+            background: 'var(--bg-2)',
+          }}
+        >
+          new workflow
+        </span>
+        <h2
+          className="display"
+          style={{
+            color: 'var(--text-0)',
+            fontSize: 32,
+            fontWeight: 540,
+            letterSpacing: '-0.03em',
+            lineHeight: 1.05,
+          }}
+        >
           Compose a workflow
         </h2>
-        <p style={{ color: 'var(--text-2)', fontSize: 13.5, lineHeight: 1.55, maxWidth: 440 }}>
+        <p
+          style={{
+            color: 'var(--text-2)',
+            fontSize: 13.5,
+            lineHeight: 1.55,
+            maxWidth: 440,
+            letterSpacing: '-0.005em',
+          }}
+        >
           Drag nodes from the left palette, chain typed ports, or ask the{' '}
-          <span style={{ color: 'var(--text-0)', fontWeight: 600 }}>Copilot</span> to generate an entire surveillance workflow.
+          <span style={{ color: 'var(--text-0)', fontWeight: 540 }}>Copilot</span> to generate an entire surveillance workflow.
         </p>
-        <div className="flex items-center gap-3 mt-1">
+        <div className="flex items-center gap-2 mt-1">
           <button
             onClick={() => setDrawerOpen(true)}
             style={{
-              height: 40, padding: '0 18px', borderRadius: 8,
-              background: 'linear-gradient(135deg, var(--accent-hi) 0%, var(--accent-lo) 100%)',
-              color: '#fff',
-              border: '1px solid color-mix(in srgb, var(--accent-lo) 45%, transparent)',
-              fontSize: 13, fontWeight: 600, cursor: 'pointer',
-              boxShadow: '0 4px 14px color-mix(in srgb, var(--accent) 28%, transparent)',
+              height: 36,
+              padding: '0 14px',
+              borderRadius: 7,
+              background: 'var(--text-0)',
+              color: 'var(--bg-base)',
+              border: '1px solid var(--text-0)',
+              fontSize: 12.5,
+              fontWeight: 540,
+              cursor: 'pointer',
+              letterSpacing: '-0.005em',
             }}
           >
             Load a template
@@ -243,14 +280,28 @@ function EmptyCanvas({ onDragOver, onDrop }: { onDragOver: (e: DragEvent<HTMLDiv
           <button
             onClick={() => setRightPanelMode('copilot')}
             style={{
-              height: 40, padding: '0 18px', borderRadius: 8,
-              background: 'transparent', color: 'var(--text-0)',
+              height: 36,
+              padding: '0 14px',
+              borderRadius: 7,
+              background: 'transparent',
+              color: 'var(--text-0)',
               border: '1px solid var(--border-strong)',
-              fontSize: 13, fontWeight: 500, cursor: 'pointer',
+              fontSize: 12.5,
+              fontWeight: 500,
+              cursor: 'pointer',
+              letterSpacing: '-0.005em',
             }}
           >
-            Ask copilot
+            Ask Copilot
           </button>
+        </div>
+        <div
+          className="flex items-center gap-2 mt-3 font-mono"
+          style={{ fontSize: 10.5, color: 'var(--text-3)', letterSpacing: '0.02em' }}
+        >
+          <kbd>⌘</kbd>
+          <kbd>K</kbd>
+          <span>to search</span>
         </div>
       </div>
     </div>

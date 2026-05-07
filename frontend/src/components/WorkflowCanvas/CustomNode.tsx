@@ -85,60 +85,78 @@ export const CustomNode = memo(({ id, data }: NodeProps<NodeData>) => {
       }}
       className={`relative cursor-pointer lift ${isRunning ? 'run-ring' : ''}`}
       style={{
-        width: 252,
-        borderRadius: 8,
-        background: isRunning
-          ? 'linear-gradient(180deg, color-mix(in srgb, var(--running) 7%, var(--bg-node-elev)) 0%, var(--bg-node) 100%)'
-          : 'linear-gradient(180deg, var(--bg-node-elev) 0%, var(--bg-node) 100%)',
-        border: `${isRunning ? 2 : 1}px solid ${borderColor}`,
+        width: 240,
+        borderRadius: 10,
+        background: 'var(--bg-node)',
+        border: `1px solid ${borderColor}`,
         boxShadow: shadow,
-        transition: 'border-color 180ms var(--ease-out), box-shadow 180ms var(--ease-out), background 180ms var(--ease-out), opacity 180ms var(--ease-out)',
+        transition:
+          'border-color 180ms var(--ease-out), box-shadow 180ms var(--ease-out), background 180ms var(--ease-out), opacity 180ms var(--ease-out)',
         zIndex: isRunning ? 10 : 1,
         opacity: isDisabled ? 0.5 : 1,
         filter: isDisabled ? 'grayscale(0.6)' : undefined,
       }}
     >
-      {/* Top accent strip — carries the node family color, with scan-sweep while running */}
+      {/* Hairline left accent (Railway-style identifier instead of full top stripe) */}
       <div
-        className={`relative overflow-hidden ${isRunning ? 'scan-sweep' : ''}`}
+        aria-hidden
+        className={isRunning ? 'scan-sweep relative overflow-hidden' : ''}
         style={{
-          height: 2,
+          position: 'absolute',
+          left: 0,
+          top: 8,
+          bottom: 8,
+          width: 2,
+          borderRadius: 2,
           background: isOk
             ? 'var(--success)'
             : isError
-            ? 'var(--danger)'
-            : meta.color,
-          borderTopLeftRadius: 7,
-          borderTopRightRadius: 7,
+              ? 'var(--danger)'
+              : isRunning
+                ? 'var(--running)'
+                : meta.color,
+          opacity: isSelected || hasRun ? 0.95 : 0.55,
         }}
       />
 
       {/* Header row */}
-      <div className="flex items-start gap-2.5 px-3 pt-2.5 pb-2">
+      <div className="flex items-center gap-2.5 px-3.5 pt-3 pb-2">
         <div
-          className="flex items-center justify-center rounded-md shrink-0"
+          className="flex items-center justify-center shrink-0"
           style={{
-            width: 26, height: 26,
-            background: `color-mix(in srgb, ${meta.color} 10%, transparent)`,
-            border: `1px solid color-mix(in srgb, ${meta.color} 28%, transparent)`,
+            width: 22,
+            height: 22,
+            borderRadius: 5,
+            background: 'transparent',
             color: meta.color,
           }}
         >
-          <IconComp size={15} strokeWidth={2} />
+          <IconComp size={14} strokeWidth={1.9} />
         </div>
         <div className="flex-1 min-w-0">
           <div
-            className="eyebrow truncate"
-            style={{ color: 'var(--text-3)', letterSpacing: '0.08em', fontSize: 9.5 }}
-          >
-            {getNodeDisplayName(data.nodeType)}
-          </div>
-          <div
-            className="truncate"
-            style={{ color: 'var(--text-0)', fontSize: 12.5, fontWeight: 560, lineHeight: 1.3, marginTop: 2 }}
+            className="truncate display"
+            style={{
+              color: 'var(--text-0)',
+              fontSize: 13,
+              fontWeight: 530,
+              lineHeight: 1.25,
+              letterSpacing: '-0.012em',
+            }}
             title={data.label}
           >
             {data.label}
+          </div>
+          <div
+            className="font-mono truncate"
+            style={{
+              color: 'var(--text-3)',
+              letterSpacing: '0.02em',
+              fontSize: 9.5,
+              marginTop: 2,
+            }}
+          >
+            {getNodeDisplayName(data.nodeType)}
           </div>
         </div>
       </div>

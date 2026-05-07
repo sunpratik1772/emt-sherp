@@ -205,35 +205,36 @@ export default function Topbar() {
         borderBottom: '1px solid var(--border)',
       }}
     >
-      {/* Left — brand + breadcrumbs (v5) */}
-      <div className="flex items-center shrink-0" style={{ gap: 10 }}>
+      {/* Left — brand + breadcrumbs (Linear/Railway-style monochrome) */}
+      <div className="flex items-center shrink-0" style={{ gap: 12 }}>
         <div
-          className="flex items-center justify-center overflow-hidden shrink-0"
+          className="flex items-center justify-center shrink-0"
           style={{
-            width: 30,
-            height: 30,
-            borderRadius: 8,
-            background: 'linear-gradient(135deg, var(--accent), var(--accent-cyan))',
-            boxShadow: '0 4px 12px color-mix(in srgb, var(--accent) 35%, transparent)',
+            width: 26,
+            height: 26,
+            borderRadius: 6,
+            background: 'var(--bg-3)',
+            border: '1px solid var(--border-strong)',
+            color: 'var(--text-0)',
           }}
           aria-label="dbSherpa"
         >
-          <img
-            src={theme === 'dark' ? '/brand/dbsherpa-logo-dark.png' : '/brand/dbsherpa-logo-light.png'}
-            alt=""
-            style={{
-              width: 25,
-              height: 25,
-              objectFit: 'contain',
-              display: 'block',
-              filter: 'brightness(0) invert(1)',
-            }}
-          />
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path
+              d="M11.5 4.5 C11.5 3.4 10.6 2.5 9.5 2.5 H6.5 C5.4 2.5 4.5 3.4 4.5 4.5 V5 C4.5 6.1 5.4 7 6.5 7 H9.5 C10.6 7 11.5 7.9 11.5 9 V11.5 C11.5 12.6 10.6 13.5 9.5 13.5 H6.5 C5.4 13.5 4.5 12.6 4.5 11.5"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              fill="none"
+            />
+          </svg>
         </div>
-        <div className="flex flex-col justify-center leading-[1.15] shrink-0 hidden sm:flex">
-          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-0)' }}>dbSherpa Studio</span>
-          <span className="font-mono" style={{ fontSize: 10.5, color: 'var(--text-3)', letterSpacing: '0.02em' }}>
-            AI workflow builder
+        <div className="flex items-baseline gap-2 shrink-0 hidden sm:flex">
+          <span className="display" style={{ fontSize: 14, fontWeight: 550, color: 'var(--text-0)', letterSpacing: '-0.018em' }}>
+            dbSherpa
+          </span>
+          <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+            studio
           </span>
         </div>
         <div className="w-px h-6 shrink-0 hidden md:block" style={{ background: borderHi, marginLeft: 2, marginRight: 2 }} />
@@ -368,17 +369,23 @@ export default function Topbar() {
           title="Account"
           className="shrink-0 border-0 p-0 cursor-default"
           style={{
-            width: 30,
-            height: 30,
+            width: 26,
+            height: 26,
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--accent), var(--accent-cyan))',
-            boxShadow: `
-              0 0 0 2px color-mix(in srgb, var(--panel-glass-bg) 95%, transparent),
-              0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent)
-            `,
+            background: 'var(--bg-3)',
+            border: '1px solid var(--border-strong)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--text-1)',
+            fontSize: 11,
+            fontWeight: 600,
+            letterSpacing: '-0.01em',
           }}
           aria-label="Profile"
-        />
+        >
+          d
+        </button>
       </div>
 
       {/* Title tooltip strip — workflow name (secondary to breadcrumbs) */}
